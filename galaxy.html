@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Space 3D Galaxy Simulation</title>
+    <meta name="description" content="Interactive 3D Spiral Galaxy Particle Simulation featuring real-time physics, audio synth, hyperspace warp, and customizable nebula themes.">
+    <link rel="stylesheet" href="galaxy.css">
+    <!-- Three.js CDN for 60FPS 3D Particle WebGL Rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <div id="canvas-container"></div>
+
+    <!-- Top Navigation Bar -->
+    <header class="top-nav">
+        <div class="brand">
+            <span class="brand-icon">✨</span>
+            <span class="brand-title">Cosmic Galaxy 3D</span>
+        </div>
+
+        <div class="top-actions">
+            <a href="index.html" class="nav-btn" title="Switch to Heart Animation">
+                <span>❤️</span> Heart Mode
+            </a>
+            <a href="galaxy.html" class="nav-btn active" title="Galaxy Mode">
+                <span>🌌</span> Galaxy Mode
+            </a>
+        </div>
+    </header>
+
+    <!-- Interactive Bottom Dock Controls -->
+    <nav class="controls-dock" aria-label="Galaxy controls">
+        <button id="warp-btn" class="dock-btn warp-btn" title="Engage Hyperdrive / Warp Speed">
+            <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <span>Warp Speed</span>
+        </button>
+
+        <button id="audio-btn" class="dock-btn" title="Toggle Cosmic Ambient Audio">
+            <svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            <span>Audio Synth</span>
+        </button>
+
+        <button id="settings-btn" class="dock-btn" title="Customize Particles & Colors">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>Customize</span>
+        </button>
+
+        <button id="reset-btn" class="dock-btn" title="Reset Viewpoint">
+            <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            <span>Reset View</span>
+        </button>
+
+        <button id="fullscreen-btn" class="dock-btn" title="Toggle Fullscreen">
+            <svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+            <span>Fullscreen</span>
+        </button>
+    </nav>
+
+    <!-- Customization Sidebar Panel -->
+    <aside id="settings-panel" class="settings-panel" aria-label="Settings panel">
+        <div class="panel-header">
+            <h2 class="panel-title">Galaxy Physics</h2>
+            <button id="close-settings" class="close-btn" aria-label="Close settings">&times;</button>
+        </div>
+
+        <div class="setting-group">
+            <label class="setting-label" for="count-slider">
+                <span>Particle Count</span>
+                <span id="count-val" class="setting-value">120,000</span>
+            </label>
+            <input type="range" id="count-slider" class="slider-input" min="20000" max="250000" step="10000" value="120000">
+        </div>
+
+        <div class="setting-group">
+            <label class="setting-label" for="branches-slider">
+                <span>Spiral Arms</span>
+                <span id="branches-val" class="setting-value">4</span>
+            </label>
+            <input type="range" id="branches-slider" class="slider-input" min="2" max="8" step="1" value="4">
+        </div>
+
+        <div class="setting-group">
+            <label class="setting-label" for="speed-slider">
+                <span>Orbit Speed</span>
+                <span id="speed-val" class="setting-value">0.15x</span>
+            </label>
+            <input type="range" id="speed-slider" class="slider-input" min="0.02" max="1.0" step="0.02" value="0.15">
+        </div>
+
+        <div class="setting-group">
+            <label class="setting-label" for="size-slider">
+                <span>Star Size</span>
+                <span id="size-val" class="setting-value">0.015</span>
+            </label>
+            <input type="range" id="size-slider" class="slider-input" min="0.005" max="0.04" step="0.002" value="0.015">
+        </div>
+
+        <div class="setting-group">
+            <span class="setting-label"><span>Nebula Theme Presets</span></span>
+            <div class="theme-grid">
+                <div class="theme-pill active" data-theme="milkyway">Milky Way</div>
+                <div class="theme-pill" data-theme="andromeda">Andromeda</div>
+                <div class="theme-pill" data-theme="supernova">Supernova</div>
+                <div class="theme-pill" data-theme="cyberpunk">Cyberpunk</div>
+                <div class="theme-pill" data-theme="emerald">Emerald</div>
+                <div class="theme-pill" data-theme="singularity">Singularity</div>
+            </div>
+        </div>
+    </aside>
+
+    <div class="info-hint">✨ Drag to rotate &bull; Scroll to zoom &bull; Click to pulse shockwave</div>
+
+    <script src="galaxy.js"></script>
+</body>
+</html>
