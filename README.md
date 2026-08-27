@@ -10,4 +10,4 @@ An interactive web visualizer featuring a glowing particle heart animation and a
 
 ## 🚀 Getting Started
 
-Simply open `index.html` or `galaxy.html` in any modern web browser.
+Simply open `index.html` or `galaxy.html` in any modern web browser
